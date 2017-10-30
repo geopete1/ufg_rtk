@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>rtkCpCnvDataPrep00_Run.m</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-08-19"><meta name="DC.source" content="rtkCpCnvDataPrep00_Run.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>rtkCpCnvDataPrep00_Run.m</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Code Purpose</a></li><li><a href="#2">Close and Clear</a></li><li><a href="#3">Identify Survey Dates to be Imported, Saved, and DCS-ed</a></li><li><a href="#4">Identify Paths and Directories</a></li><li><a href="#5">Run the Loop</a></li></ul></div><h2>Code Purpose<a name="1"></a></h2><p>This is the "run" script that enacts the various tasks of rtk-gps data preparation (hence, 'DataPrep' in the code title) for UF's 5 year monthly measurements of beach bathymetry at NASA-Kennedy Space Center (KSC) during the time period from May 2009 through May 2014.</p><p>This script: (1) allows the user to identify the dates of the field surveys to prep for detailed analysis, (2) identifies the relevant paths and directories for inputs and outputs, and (3) runs a loop that calls two functions - one that imports the text data saving it to a number of variables in a .mat file, and one that performs some basic display of data collection statistics.</p><p>Developed and documented by pna at UF during summer of 2016</p><h2>Close and Clear<a name="2"></a></h2><p>Start wit a clean slate.</p><pre class="codeinput">close <span class="string">all</span>,clear <span class="string">all</span>
+</pre><h2>Identify Survey Dates to be Imported, Saved, and DCS-ed<a name="3"></a></h2><p>Below, commented out, are some cell arrays containing strings of dates to be imported and prepped by the loop in this function.</p><p>sd={'09_05_06' '09_05_07' '09_05_24' '09_05_28' '09_06_06' '09_06_07' ...    '09_07_06' '09_07_07' '09_08_01' '09_08_02' '09_09_05' '09_10_05' ...    '09_11_06' '09_11_07' '09_12_01'};</p><pre class="codeinput"><span class="comment">% sd={'10_01_03' '10_01_31' '10_02_28' '10_05_01' '10_05_02' '10_05_27' ...</span>
+<span class="comment">%    '10_07_25' '10_07_28' '10_07_31' '10_08_28' '10_10_02' '10_10_03' ...</span>
+<span class="comment">%    '10_10_09' '10_10_24' '10_10_25' '10_11_20' '10_12_21'};</span>
+
+sd={<span class="string">'09_09_05'</span>};
+</pre><h2>Identify Paths and Directories<a name="4"></a></h2><p>genl_path='/Volumes/ls-geo-adams/Geo-Adams-Share/Data/Data01_RTK/';</p><pre class="codeinput">genl_path=<span class="string">'/Users/pna/Dropbox/Data/Data01_CpCnv/'</span>;
+raw_dir=<span class="string">'RTK_Survey_ReOrg_CPB/'</span>;
+clean_dir=<span class="string">'RTK_Survey_Clean_PNA/'</span>;
+</pre><h2>Run the Loop<a name="5"></a></h2><pre class="codeinput"><span class="keyword">for</span> j=1:length(sd)
+    disp(sprintf([<span class="string">'\n'</span> <span class="string">'Working on Survey ID '</span> sd{j}]))
+    disp(sprintf([<span class="string">'\n'</span> <span class="string">'Running Import fcn...\n'</span>]))
+    rtkCpCnvDataPrep01_Import(sd{j},genl_path,raw_dir,clean_dir)
+    disp(sprintf([<span class="string">'\n'</span> <span class="string">'Running DCS fcn...\n'</span>]))
+    rtkCpCnvDataPrep02_DCS(sd{j},genl_path,raw_dir,clean_dir)
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+Working on Survey ID 09_09_05
+
+Running Import fcn...
+
+2.7 sec = imported DOP
+22.1 sec = imported r13 PTS (total=24.8 sec)
+21.1 sec = imported r64 PTS (total=45.9 sec)
+0 sec = corrected r13 PTS (total=45.9 sec)
+0 sec = corrected r64 PTS (total=45.9 sec)
+0 sec = merged data (total=45.9 sec)
+0 sec = cleaned data (total=46 sec)
+2.2 sec = bounded data (total=48.2 sec)
+1.2 sec = plotted data (total=49.4 sec)
+1.2 sec = saved data (total=50.6 sec)
+58.3 sec = printed graphics (total=108.9 sec)
+
+Running DCS fcn...
+
+1 sec = .mat file loaded
+0 sec = variable names converted (total=1 sec)
+1.1 sec = time formats converted (total=2.1 sec)
+0.6 sec = plots plotted (total=2.8 sec)
+19.4 sec = plots printed to graphics files (total=22.1 sec)
+</pre><img vspace="5" hspace="5" src="rtkCpCnvDataPrep00_Run_01.png" alt=""> <img vspace="5" hspace="5" src="rtkCpCnvDataPrep00_Run_02.png" alt=""> <img vspace="5" hspace="5" src="rtkCpCnvDataPrep00_Run_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% rtkCpCnvDataPrep00_Run.m
+%
+%% Code Purpose
+%
+% This is the "run" script that enacts the various tasks of rtk-gps data
+% preparation (hence, 'DataPrep' in the code title) for UF's 5 year monthly
+% measurements of beach bathymetry at NASA-Kennedy Space Center (KSC)
+% during the time period from May 2009 through May 2014.
+%
+% This script: (1) allows the user to identify the dates of the field surveys to
+% prep for detailed analysis, (2) identifies the relevant paths and
+% directories for inputs and outputs, and (3) runs a loop that calls two
+% functions - one that imports the text data saving it to a number of
+% variables in a .mat file, and one that performs some basic display of
+% data collection statistics.
+%
+% Developed and documented by pna at UF during summer of 2016
+%
+%% Close and Clear
+%
+% Start wit a clean slate.
+%
+close all,clear all
+%% Identify Survey Dates to be Imported, Saved, and DCS-ed
+%
+% Below, commented out, are some cell arrays containing strings of dates to
+% be imported and prepped by the loop in this function.
+% 
+% sd={'09_05_06' '09_05_07' '09_05_24' '09_05_28' '09_06_06' '09_06_07' ...
+%    '09_07_06' '09_07_07' '09_08_01' '09_08_02' '09_09_05' '09_10_05' ...
+%    '09_11_06' '09_11_07' '09_12_01'};
+ 
+% sd={'10_01_03' '10_01_31' '10_02_28' '10_05_01' '10_05_02' '10_05_27' ...
+%    '10_07_25' '10_07_28' '10_07_31' '10_08_28' '10_10_02' '10_10_03' ...
+%    '10_10_09' '10_10_24' '10_10_25' '10_11_20' '10_12_21'};
+ 
+sd={'09_09_05'};
+
+%% Identify Paths and Directories
+%
+% genl_path='/Volumes/ls-geo-adams/Geo-Adams-Share/Data/Data01_RTK/';
+genl_path='/Users/pna/Dropbox/Data/Data01_CpCnv/';
+raw_dir='RTK_Survey_ReOrg_CPB/';
+clean_dir='RTK_Survey_Clean_PNA/';
+
+%% Run the Loop
+%
+for j=1:length(sd)
+    disp(sprintf(['\n' 'Working on Survey ID ' sd{j}]))
+    disp(sprintf(['\n' 'Running Import fcn...\n']))
+    rtkCpCnvDataPrep01_Import(sd{j},genl_path,raw_dir,clean_dir)
+    disp(sprintf(['\n' 'Running DCS fcn...\n']))
+    rtkCpCnvDataPrep02_DCS(sd{j},genl_path,raw_dir,clean_dir)
+end
+
+##### SOURCE END #####
+--></body></html>
